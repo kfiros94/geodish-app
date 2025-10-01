@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoDish - Discover World Cuisines</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#home">
+                <i class="fas fa-globe-americas me-2"></i>GeoDish
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#countries"><i class="fas fa-flag me-1"></i>Countries</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dish-section"><i class="fas fa-utensils me-1"></i>Discover</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#recipes-section"><i class="fas fa-bookmark me-1"></i>My Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about"><i class="fas fa-info-circle me-1"></i>About</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Search -->
+                    <div class="me-3">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search dish...">
+                            <button class="btn btn-outline-light btn-sm" type="button" id="searchBtn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Dark/Light Mode Toggle -->
+                    <button class="btn btn-outline-light" id="themeToggle" type="button">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 76px;">
+        
+        <!-- Hero Section -->
+        <section id="home" class="hero-section py-5">
+            <div class="container text-center">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!-- Logo placeholder - you'll replace this with your image -->
+                        <div class="logo-container mb-4">
+                            <img src="/static/geodish-logo.png" alt="GeoDish Logo" class="logo-img mb-3" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="logo-fallback" style="display: none;">
+                                <i class="fas fa-globe-americas display-1 text-primary mb-3"></i>
+                                <h1 class="display-3 fw-bold text-primary mb-3">🌍 GeoDish</h1>
+                            </div>
+                        </div>
+                        
+                        <h2 class="display-5 fw-bold mb-4">Discover Delicious Dishes from Around the World!</h2>
+                        <p class="lead mb-4">
+                            Explore traditional cuisines from 20 different countries. Select a country below, 
+                            discover authentic dishes, and save your favorites to create your personal recipe collection.
+                        </p>
+                        
+                        <div class="d-flex justify-content-center gap-3 mb-4">
+                            <a href="#countries" class="btn btn-primary btn-lg">
+                                <i class="fas fa-compass me-2"></i>Explore Countries
+                            </a>
+                            <a href="#recipes-section" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-bookmark me-2"></i>My Recipes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Countries Grid Section -->
+        <section id="countries" class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-12 text-center">
+                        <h2 class="display-6 fw-bold mb-3">Choose Your Culinary Adventure</h2>
+                        <p class="lead">Click on any country to discover its traditional dishes</p>
+                    </div>
+                </div>
+                
+                <div id="countriesGrid" class="row g-4">
+                    <!-- Countries will be populated here by JavaScript -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading countries...</span>
+                        </div>
+                        <p class="mt-3">Loading countries...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dish Display Section -->
+        <section id="dish-section" class="py-5">
+            <div class="container">
+                <div id="dishDisplay" class="row justify-content-center" style="display: none;">
+                    <div class="col-lg-8">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-header bg-primary text-white text-center">
+                                <h3 class="mb-0">
+                                    <i class="fas fa-utensils me-2"></i>
+                                    <span id="dishName">Dish Name</span>
+                                </h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h5><i class="fas fa-flag me-2 text-primary"></i>Country</h5>
+                                            <span id="dishCountry" class="badge bg-primary fs-6">Country</span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h5><i class="fas fa-list-ul me-2 text-success"></i>Ingredients</h5>
+                                            <p id="dishIngredients" class="text-muted">Ingredients list</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h5><i class="fas fa-book-open me-2 text-info"></i>Instructions</h5>
+                                            <p id="dishInstructions" class="text-muted">Cooking instructions</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button id="saveDish" class="btn btn-success btn-lg me-3">
+                                        <i class="fas fa-bookmark me-2"></i>Save to My Recipes
+                                    </button>
+                                    <button id="getAnotherDish" class="btn btn-outline-primary btn-lg">
+                                        <i class="fas fa-dice me-2"></i>Get Another Dish
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No dish selected state -->
+                <div id="noDishSelected" class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <i class="fas fa-utensils display-1 text-muted mb-4"></i>
+                        <h3 class="text-muted">No dish selected yet</h3>
+                        <p class="text-muted">Choose a country above to discover delicious dishes!</p>
+                        <a href="#countries" class="btn btn-primary">
+                            <i class="fas fa-arrow-up me-2"></i>Choose Country
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Recipes Section -->
+        <section id="recipes-section" class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="display-6 fw-bold text-center mb-3">
+                            <i class="fas fa-bookmark me-3 text-primary"></i>My Saved Recipes
+                        </h2>
+                        <p class="text-center lead">Your personal collection of discovered dishes</p>
+                    </div>
+                </div>
+                
+                <div id="savedRecipes" class="row">
+                    <div class="col-12 text-center">
+                        <i class="fas fa-clipboard-list display-1 text-muted mb-4"></i>
+                        <h4 class="text-muted">No saved recipes yet</h4>
+                        <p class="text-muted">Start discovering dishes to build your personal cookbook!</p>
+                        <a href="#countries" class="btn btn-primary">
+                            <i class="fas fa-compass me-2"></i>Start Exploring
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h2 class="display-6 fw-bold mb-4">About GeoDish</h2>
+                        <p class="lead mb-4">
+                            GeoDish is your gateway to discovering authentic cuisines from around the world. 
+                            Our curated collection features traditional dishes from 20 countries, each with 
+                            authentic ingredients and cooking instructions.
+                        </p>
+                        
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-globe-americas display-4 text-primary mb-3"></i>
+                                        <h5>20 Countries</h5>
+                                        <p class="text-muted">Explore diverse culinary traditions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-utensils display-4 text-success mb-3"></i>
+                                        <h5>100+ Dishes</h5>
+                                        <p class="text-muted">Authentic recipes from local cuisines</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-bookmark display-4 text-info mb-3"></i>
+                                        <h5>Personal Collection</h5>
+                                        <p class="text-muted">Save and organize your favorites</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">
+                        <i class="fas fa-globe-americas me-2"></i>GeoDish
+                    </h5>
+                    <small class="text-muted">Discover delicious dishes from around the world</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2025 GeoDish. All rights reserved.</p>
+                    <small class="text-muted">Built with ❤️ for food lovers worldwide</small>
+                </div>
+            </div>
+            
+            <!-- API Documentation (collapsible) -->
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#apiDocs">
+                        <i class="fas fa-code me-2"></i>API Documentation
+                    </button>
+                    
+                    <div class="collapse mt-3" id="apiDocs">
+                        <div class="card bg-secondary">
+                            <div class="card-body">
+                                <h6 class="card-title text-light">GeoDish REST API Endpoints:</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled text-light small">
+                                            <li><code>GET /countries</code> - List all countries</li>
+                                            <li><code>GET /dish/random/{country}</code> - Get random dish</li>
+                                            <li><code>POST /user/{user_id}/recipes</code> - Save recipe</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled text-light small">
+                                            <li><code>GET /user/{user_id}/recipes</code> - Get saved recipes</li>
+                                            <li><code>DELETE /user/{user_id}/recipes/{id}</code> - Delete recipe</li>
+                                            <li><code>GET /metrics</code> - Health check</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

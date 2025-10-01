@@ -1,0 +1,212 @@
+/* GeoDish Enhanced Styles */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #48bb78;
+    --info-color: #4299e1;
+    --warning-color: #ed8936;
+    --danger-color: #e53e3e;
+}
+
+[data-bs-theme="dark"] {
+    --bs-body-bg: #1a1a1a;
+    --bs-body-color: #e9ecef;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* Logo styles */
+.logo-img {
+    max-height: 150px;
+    max-width: 300px;
+    object-fit: contain;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+[data-bs-theme="dark"] .hero-section {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+}
+
+/* Country Cards */
+.country-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.country-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.country-card.selected {
+    border: 3px solid var(--primary-color);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+}
+
+.country-flag {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Dish Cards */
+.dish-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.dish-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Recipe Cards */
+.recipe-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.recipe-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.recipe-delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    background: var(--danger-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.recipe-card:hover .recipe-delete-btn {
+    opacity: 1;
+}
+
+/* Search Input Styling */
+#searchInput {
+    max-width: 200px;
+}
+
+/* Loading States */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Smooth scroll padding for fixed navbar */
+section {
+    scroll-margin-top: 76px;
+}
+
+/* Success/Error Messages */
+.alert-custom {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 1050;
+    min-width: 300px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Dark mode transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 50vh;
+        text-align: center;
+    }
+    
+    .logo-img {
+        max-height: 100px;
+    }
+    
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .display-6 {
+        font-size: 1.8rem;
+    }
+    
+    #searchInput {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+}
