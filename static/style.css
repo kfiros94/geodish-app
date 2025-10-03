@@ -100,7 +100,7 @@ body {
     box-shadow: none !important;
     height: auto !important;
     min-height: auto !important;
-    padding: 10px 5px !important;
+    padding: 15px 8px !important;  /* Increased padding for bigger flags */
 }
 
 .country-card:hover {
@@ -125,30 +125,30 @@ body {
 
 /* Country flag images - BIGGER SIZE */
 .country-flag {
-    width: 50px !important;      /* Increased from 40px */
-    height: 33px !important;     /* Increased from 27px */
+    width: 60px !important;      /* INCREASED from 50px */
+    height: 40px !important;     /* INCREASED from 33px */
     object-fit: contain !important;
     object-position: center !important;
     background: transparent !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;  /* Slightly larger radius */
     padding: 0 !important;
-    margin: 0 auto 8px auto !important;
+    margin: 0 auto 12px auto !important;  /* More margin */
     border: none !important;
     transition: all 0.3s ease !important;
     display: block !important;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));  /* Stronger shadow */
 }
 
 .country-card:hover .country-flag {
     transform: scale(1.1);
-    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
 }
 
 /* Country name styling - CLEAN */
 .country-card .card-title {
     font-weight: 500 !important;
     color: #2d3748 !important;
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;  /* Slightly larger font */
     margin: 0 !important;
     letter-spacing: 0.3px;
     line-height: 1.2;
@@ -159,10 +159,10 @@ body {
 
 /* Emoji flag styling - BIGGER */
 .country-flag-emoji {
-    font-size: 2.8rem !important;   /* Increased from 2.2rem */
+    font-size: 3.2rem !important;   /* INCREASED from 2.8rem */
     line-height: 1 !important;
-    margin: 0 0 8px 0 !important;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    margin: 0 0 12px 0 !important;  /* More margin */
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
 }
 
 /* Dark mode adjustments */
@@ -215,6 +215,27 @@ body {
 /* Dark mode dish images */
 [data-bs-theme="dark"] .dish-image {
     border-color: #2d3748 !important;
+}
+
+/* === COUNTRY BADGE FLAG STYLING === */
+#dishCountry {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+#dishCountry::first-letter {
+    font-size: 1.1em !important;
+    margin-right: 2px !important;
+}
+
+/* Dark mode country badge */
+[data-bs-theme="dark"] #dishCountry {
+    background-color: rgba(0, 123, 255, 0.15) !important;
+    border-color: rgba(0, 123, 255, 0.3) !important;
 }
 
 /* === DISH CARDS === */
@@ -304,6 +325,51 @@ section {
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
+/* === FOOTER FIXES FOR DARK MODE === */
+/* Force footer to have proper colors in all themes */
+footer.bg-dark {
+    background-color: #212529 !important;
+}
+
+footer.bg-dark h5,
+footer.bg-dark p,
+footer.bg-dark small {
+    color: #f8f9fa !important;
+}
+
+footer.bg-dark .text-muted {
+    color: #adb5bd !important;
+}
+
+/* Dark mode specific footer adjustments */
+[data-bs-theme="dark"] footer.bg-dark {
+    background-color: #0d1117 !important;
+    border-top: 1px solid #21262d;
+}
+
+[data-bs-theme="dark"] footer.bg-dark h5,
+[data-bs-theme="dark"] footer.bg-dark p {
+    color: #e6edf3 !important;
+}
+
+[data-bs-theme="dark"] footer.bg-dark small.text-muted {
+    color: #7d8590 !important;
+}
+
+/* Hero section text visibility fix */
+[data-bs-theme="dark"] .hero-section h2,
+[data-bs-theme="dark"] .hero-section p.lead {
+    color: #e6edf3 !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Light mode hero section (ensure proper contrast) */
+.hero-section h2,
+.hero-section p.lead {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
 /* === THEME AND TRANSITIONS === */
 /* Dark mode transitions */
 * {
@@ -355,8 +421,12 @@ section {
     }
     
     .country-flag {
-        width: 45px !important;
-        height: 30px !important;
+        width: 55px !important;     /* Bigger on tablet */
+        height: 37px !important;
+    }
+    
+    .country-flag-emoji {
+        font-size: 2.8rem !important;
     }
     
     .dish-image {
@@ -402,8 +472,12 @@ section {
     }
     
     .country-flag {
-        width: 42px !important;
-        height: 28px !important;
+        width: 50px !important;     /* Bigger on mobile */
+        height: 33px !important;
+    }
+    
+    .country-flag-emoji {
+        font-size: 2.5rem !important;
     }
     
     .dish-image {
@@ -487,48 +561,4 @@ img[src*="logo"] {
 .hero-section .row {
     justify-content: center;
     align-items: center;
-}
-/* === FOOTER FIXES FOR DARK MODE === */
-/* Force footer to have proper colors in all themes */
-footer.bg-dark {
-    background-color: #212529 !important;
-}
-
-footer.bg-dark h5,
-footer.bg-dark p,
-footer.bg-dark small {
-    color: #f8f9fa !important;
-}
-
-footer.bg-dark .text-muted {
-    color: #adb5bd !important;
-}
-
-/* Dark mode specific footer adjustments */
-[data-bs-theme="dark"] footer.bg-dark {
-    background-color: #0d1117 !important;
-    border-top: 1px solid #21262d;
-}
-
-[data-bs-theme="dark"] footer.bg-dark h5,
-[data-bs-theme="dark"] footer.bg-dark p {
-    color: #e6edf3 !important;
-}
-
-[data-bs-theme="dark"] footer.bg-dark small.text-muted {
-    color: #7d8590 !important;
-}
-
-/* Hero section text visibility fix */
-[data-bs-theme="dark"] .hero-section h2,
-[data-bs-theme="dark"] .hero-section p.lead {
-    color: #e6edf3 !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-
-/* Light mode hero section (ensure proper contrast) */
-.hero-section h2,
-.hero-section p.lead {
-    color: #ffffff !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
