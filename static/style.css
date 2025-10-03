@@ -19,14 +19,58 @@ body {
     scroll-behavior: smooth;
 }
 
-/* Logo styles */
-.logo-img {
-    max-height: 150px;
-    max-width: 300px;
-    object-fit: contain;
+/* === LOGO STYLES - BIGGER SIZES === */
+/* Navbar Logo */
+.navbar-logo {
+    height: 40px !important;
+    width: auto !important;
+    max-width: 120px !important;
+    transition: transform 0.3s ease;
 }
 
-/* Hero Section */
+.navbar-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Hero Section Logo - BIGGER */
+.hero-logo {
+    max-height: 220px !important;  /* Increased from 180px */
+    max-width: 350px !important;   /* Increased from 280px */
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 8px 32px rgba(0,0,0,0.3));
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* Logo floating animation */
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Original logo styles - BIGGER sizes */
+.logo-img {
+    max-height: 220px !important;  /* Increased from 180px */
+    max-width: 350px !important;   /* Increased from 280px */
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Logo container - bigger constraints */
+.logo-container {
+    position: relative;
+    max-width: 400px !important;   /* Increased from 350px */
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* === HERO SECTION === */
 .hero-section {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
@@ -39,35 +83,141 @@ body {
     background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
 }
 
-/* Country Cards */
+/* Hero section text color adjustment */
+.hero-section h2,
+.hero-section p {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* === COUNTRY CARDS - BORDERLESS CLEAN DESIGN === */
 .country-card {
     cursor: pointer;
     transition: all 0.3s ease;
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 10px 5px !important;
 }
 
 .country-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
 }
 
 .country-card.selected {
-    border: 3px solid var(--primary-color);
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+    background: rgba(102, 126, 234, 0.1) !important;
+    border-radius: 12px !important;
+    transform: translateY(-5px);
 }
 
+/* Country card body - NO BACKGROUND */
+.country-card .card-body {
+    padding: 0 !important;
+    text-align: center;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Country flag images - BIGGER SIZE */
 .country-flag {
-    width: 60px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    width: 50px !important;      /* Increased from 40px */
+    height: 33px !important;     /* Increased from 27px */
+    object-fit: contain !important;
+    object-position: center !important;
+    background: transparent !important;
+    border-radius: 6px !important;
+    padding: 0 !important;
+    margin: 0 auto 8px auto !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-/* Dish Cards */
+.country-card:hover .country-flag {
+    transform: scale(1.1);
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.15));
+}
+
+/* Country name styling - CLEAN */
+.country-card .card-title {
+    font-weight: 500 !important;
+    color: #2d3748 !important;
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Emoji flag styling - BIGGER */
+.country-flag-emoji {
+    font-size: 2.8rem !important;   /* Increased from 2.2rem */
+    line-height: 1 !important;
+    margin: 0 0 8px 0 !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Dark mode adjustments */
+[data-bs-theme="dark"] .country-card {
+    background: transparent !important;
+}
+
+[data-bs-theme="dark"] .country-card:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .country-card.selected {
+    background: rgba(102, 126, 234, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .country-card .card-title {
+    color: #e2e8f0 !important;
+}
+
+/* Remove all Bootstrap card styling */
+.country-card.card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.country-card.card:hover {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* === DISH IMAGE STYLES - NO HOVER EFFECTS === */
+.dish-image-container {
+    margin-bottom: 20px !important;
+    text-align: center;
+}
+
+.dish-image {
+    max-width: 100% !important;
+    width: 300px !important;
+    height: 200px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    border: 2px solid #f8f9fa !important;
+    /* NO HOVER EFFECTS - removed transition and hover transform */
+}
+
+/* Dark mode dish images */
+[data-bs-theme="dark"] .dish-image {
+    border-color: #2d3748 !important;
+}
+
+/* === DISH CARDS === */
 .dish-card {
     transition: all 0.3s ease;
     border: none;
@@ -80,7 +230,7 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* Recipe Cards */
+/* === RECIPE CARDS === */
 .recipe-card {
     transition: all 0.3s ease;
     border: none;
@@ -115,6 +265,7 @@ body {
     opacity: 1;
 }
 
+/* === SEARCH AND UI ELEMENTS === */
 /* Search Input Styling */
 #searchInput {
     max-width: 200px;
@@ -153,6 +304,7 @@ section {
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
+/* === THEME AND TRANSITIONS === */
 /* Dark mode transitions */
 * {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
@@ -176,15 +328,40 @@ section {
     background: var(--secondary-color);
 }
 
-/* Responsive adjustments */
+/* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
     .hero-section {
         min-height: 50vh;
         text-align: center;
     }
     
+    .hero-logo {
+        max-height: 160px !important;
+        max-width: 260px !important;
+    }
+    
+    .navbar-logo {
+        height: 35px !important;
+        max-width: 100px !important;
+    }
+    
     .logo-img {
-        max-height: 100px;
+        max-height: 160px !important;
+        max-width: 260px !important;
+    }
+    
+    .logo-container {
+        max-width: 300px !important;
+    }
+    
+    .country-flag {
+        width: 45px !important;
+        height: 30px !important;
+    }
+    
+    .dish-image {
+        width: 280px !important;
+        height: 180px !important;
     }
     
     .display-3 {
@@ -205,8 +382,153 @@ section {
         padding: 2rem 0;
     }
     
+    .hero-logo {
+        max-height: 140px !important;
+        max-width: 220px !important;
+    }
+    
+    .navbar-logo {
+        height: 30px !important;
+        max-width: 80px !important;
+    }
+    
+    .logo-img {
+        max-height: 140px !important;
+        max-width: 220px !important;
+    }
+    
+    .logo-container {
+        max-width: 250px !important;
+    }
+    
+    .country-flag {
+        width: 42px !important;
+        height: 28px !important;
+    }
+    
+    .dish-image {
+        width: 100% !important;
+        max-width: 260px !important;
+        height: 160px !important;
+    }
+    
     .btn-lg {
         padding: 0.5rem 1rem;
         font-size: 1rem;
     }
+}
+
+/* === ADDITIONAL ENHANCEMENTS === */
+/* Hover effects for interactive elements */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Card hover effects */
+.card {
+    transition: all 0.3s ease;
+}
+
+/* Enhanced focus states */
+.form-control:focus,
+.btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Navbar brand hover effect */
+.navbar-brand {
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+/* Additional spacing and layout improvements */
+.container {
+    position: relative;
+}
+
+/* Enhanced button styles */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    border: none;
+}
+
+/* Prevent logo from growing too large - Updated for bigger logo */
+img[src*="logo"] {
+    max-height: 250px !important;  /* Increased from 200px */
+    max-width: 380px !important;   /* Increased from 300px */
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Force navbar logo size */
+.navbar img {
+    max-height: 40px !important;
+    max-width: 120px !important;
+}
+
+/* Hero section layout fixes */
+.hero-section .container {
+    max-width: 100%;
+}
+
+.hero-section .row {
+    justify-content: center;
+    align-items: center;
+}
+/* === FOOTER FIXES FOR DARK MODE === */
+/* Force footer to have proper colors in all themes */
+footer.bg-dark {
+    background-color: #212529 !important;
+}
+
+footer.bg-dark h5,
+footer.bg-dark p,
+footer.bg-dark small {
+    color: #f8f9fa !important;
+}
+
+footer.bg-dark .text-muted {
+    color: #adb5bd !important;
+}
+
+/* Dark mode specific footer adjustments */
+[data-bs-theme="dark"] footer.bg-dark {
+    background-color: #0d1117 !important;
+    border-top: 1px solid #21262d;
+}
+
+[data-bs-theme="dark"] footer.bg-dark h5,
+[data-bs-theme="dark"] footer.bg-dark p {
+    color: #e6edf3 !important;
+}
+
+[data-bs-theme="dark"] footer.bg-dark small.text-muted {
+    color: #7d8590 !important;
+}
+
+/* Hero section text visibility fix */
+[data-bs-theme="dark"] .hero-section h2,
+[data-bs-theme="dark"] .hero-section p.lead {
+    color: #e6edf3 !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Light mode hero section (ensure proper contrast) */
+.hero-section h2,
+.hero-section p.lead {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
