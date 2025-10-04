@@ -16,7 +16,7 @@ services:
 
   mongodb:
     image: mongo:7.0
-    # ❌ REMOVED: ports: - "27017:27017"  # No external access to database.
+    # ❌ REMOVED: ports: - "27017:27017"  # No external access to database
     expose:
       - "27017"  # ✅ Only exposed to internal network
     volumes:
