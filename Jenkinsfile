@@ -22,10 +22,10 @@ pipeline {
             steps {
                 echo '=== Build Stage: Compile Application Code ==='
                 script {
-                    sh '''
+                    sh '''#!/bin/bash
                         echo "Creating Python virtual environment..."
                         python3 -m venv venv
-                        source venv/bin/activate
+                        . venv/bin/activate
                         
                         echo "Installing Python dependencies..."
                         pip install -r requirements.txt
@@ -38,6 +38,7 @@ pipeline {
                 }
             }
 }
+
 
         
         stage('Test') {
