@@ -18,7 +18,7 @@ pipeline {
             }
         }
     
-       stage('Test') {
+stage('Test') {
     steps {
         echo '=== Test Stage: Running Unit Tests ==='
         script {
@@ -27,13 +27,15 @@ pipeline {
                 . venv/bin/activate
                 
                 echo "Running unit tests..."
-                python3 -m pytest test.py -v --tb=short
+                python3 -m pytest tests/ -v --tb=short
                 
                 echo "Tests completed successfully"
             '''
         }
     }
 }
+
+
 
 
 
