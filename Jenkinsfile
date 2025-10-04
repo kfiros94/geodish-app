@@ -17,14 +17,18 @@ pipeline {
                 }
             }
         }
-        
+    
         stage('Build') {
             steps {
                 echo '=== Build Stage: Compile Application Code ==='
                 script {
                     sh '''
+                        echo "Creating Python virtual environment..."
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        
                         echo "Installing Python dependencies..."
-                        pip3 install --user -r requirements.txt
+                        pip install -r requirements.txt
                         
                         echo "Compiling Python bytecode..."
                         python3 -m py_compile app/*.py
@@ -33,7 +37,8 @@ pipeline {
                     '''
                 }
             }
-        }
+}
+
         
         stage('Test') {
             steps {
