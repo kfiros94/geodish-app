@@ -18,26 +18,23 @@ pipeline {
             }
         }
     
-        stage('Build') {
-            steps {
-                echo '=== Build Stage: Compile Application Code ==='
-                script {
-                    sh '''#!/bin/bash
-                        echo "Creating Python virtual environment..."
-                        python3 -m venv venv
-                        . venv/bin/activate
-                        
-                        echo "Installing Python dependencies..."
-                        pip install -r requirements.txt
-                        
-                        echo "Compiling Python bytecode..."
-                        python3 -m py_compile app/*.py
-                        
-                        echo "Build completed successfully"
-                    '''
-                }
-            }
+       stage('Test') {
+    steps {
+        echo '=== Test Stage: Running Unit Tests ==='
+        script {
+            sh '''#!/bin/bash
+                echo "Activating virtual environment..."
+                . venv/bin/activate
+                
+                echo "Running unit tests..."
+                python3 -m pytest test.py -v --tb=short
+                
+                echo "Tests completed successfully"
+            '''
+        }
+    }
 }
+
 
 
         
