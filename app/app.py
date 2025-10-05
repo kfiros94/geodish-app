@@ -18,7 +18,7 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize database and seed manager
+# Initialize database and seed manager.
 db = Database()
 seed_manager = SeedManager(db)
 
