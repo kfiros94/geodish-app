@@ -54,5 +54,14 @@ def get_seed_info():
     except Exception as e:
         logger.error(f"Error getting seed info: {str(e)}")
         return jsonify({"error": str(e)}), 500
+@app.route('/user/<userid>/recipes/<recipeid>', methods=['PUT'])
+def update_user_recipe(userid, recipeid):
+    data = request.get_json()
+    updated = db.update_user_recipe(userid, recipeid, data)
+    if updated:
+        return jsonify({"message": "Recipe updated"}), 200
+    else:
+        return jsonify({"error": "Recipe not found"}), 404
+
 
 # ... rest of your routes stay exactly the same
