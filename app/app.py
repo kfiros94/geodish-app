@@ -63,5 +63,9 @@ def update_user_recipe(userid, recipeid):
     else:
         return jsonify({"error": "Recipe not found"}), 404
 
+# Add this to your app.py to fix /seed-info endpoint
+def get_countries():
+    """Get list of available countries"""
+    return ['Italy', 'France', 'Spain', 'Germany', 'Greece']  # Your countries list
 
 # ... rest of your routes stay exactly the same
