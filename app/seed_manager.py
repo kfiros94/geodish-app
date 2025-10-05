@@ -2,9 +2,8 @@
 GeoDish Seed Manager
 Handles all seeding operations
 """
-from .data import GEODISH_SEED_DATA, get_country_count, get_dish_count
+from .data import GEODISH_SEED_DATA, get_country_count, get_dish_count, get_countries  # Add get_countries here
 import logging
-
 logger = logging.getLogger(__name__)
 
 class SeedManager:
