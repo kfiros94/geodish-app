@@ -106,8 +106,9 @@ pipeline {
                 echo '=== ECR Stage: Tag and Push to ECR (Main Branch Only) ==='
                 script {
                     withCredentials([
-                        aws(credentialsId: 'aws-credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
-                    ]) {
+                        aws(credentialsId: 'aws-access-key-id', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
+                            ])
+                            {
                         sh '''#!/usr/bin/env bash
                             set -euo pipefail
                             
