@@ -89,9 +89,9 @@ pipeline {
                         sh '''
                             echo "Starting integration test environment..."
                             
-                            # Use the newly built image in docker-compose
+                            # Use the newly built image in docker compose
                             export GEODISH_IMAGE=${APP_NAME}:${DOCKER_IMAGE_TAG}
-                            docker-compose -f docker-compose.yaml up -d
+                            docker compose -f docker-compose.yaml up -d
                             
                             echo "Waiting for services to be ready..."
                             sleep 30
@@ -106,7 +106,7 @@ pipeline {
                     } finally {
                         sh '''
                             echo "Cleaning up integration test environment..."
-                            docker-compose -f docker-compose.yaml down -v
+                            docker compose -f docker-compose.yaml down -v
                         '''
                     }
                 }
