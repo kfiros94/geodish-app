@@ -75,28 +75,52 @@ pipeline {
             }
         }
         
-        stage('Integration Tests') {
-            when {
-                anyOf {
-                    branch 'main'
-                    branch 'feature/*'
-                }
+      stage('Integration Tests') {
+        when {
+            anyOf {
+                branch 'main'
+                branch 'feature/*'
             }
-            steps {
-                echo '=== Integration Tests: Temporarily Simplified ==='
+        }
+        steps {
+            echo '=== Integration Tests: Containerized Testing ===  '
+            script {
+                sh '''#!/bin/bash
+                    set -euo pipefail
+                    
+                    echo "🐳 Running integration tests in container..."
+                    
+                    # Start MongoDB container for testing
+                    echo "🚀 Starting MongoDB test container..."
+                    docker run -d --name mongo-test -p 27017:27017 mongo:7.0
+                    
+                    # Wait for MongoDB to be ready
+                    echo "⏳ Waiting for MongoDB to be ready..."
+                    sleep 15
+                    
+                    # Run integration tests against the container
+                    echo "🧪 Running integration tests..."
+                    . venv/bin/activate
+                    export MONGODB_URI="mongodb://localhost:27017/geodish_test"
+                    python3 -m pytest tests/test.py -v --tb=short
+                    
+                    echo "✅ Integration tests completed!"
+                '''
+            }
+        }
+        post {
+            always {
                 script {
                     sh '''
-                        echo "✅ Docker Compose: Skipping complex setup for now"
-                        echo "🎯 Focus: Testing ECR integration first"
-                        echo "📝 Note: Will re-enable full integration tests after ECR works"
-                        echo "🔧 TODO: Fix nginx.conf mounting issue later"
-                        
-                        echo "✅ Basic integration test simulation completed"
-                        echo "🚀 Proceeding to ECR push stage..."
+                        echo "🧹 Cleaning up MongoDB test container..."
+                        docker stop mongo-test || true
+                        docker rm mongo-test || true
                     '''
                 }
             }
+        }
 }
+
 
 
         
