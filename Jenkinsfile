@@ -105,18 +105,23 @@ pipeline {
             steps {
                 echo '=== ECR Stage: Tag and Push to ECR (Main Branch Only) ==='
                 script {
-                    withCredentials([aws(credentialsId: 'aws-access-key-id', region: env.AWS_REGION)]) {
-                        sh '''
+                    withCredentials([
+                        aws(credentialsId: 'aws-credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
+                    ]) {
+                        sh '''#!/usr/bin/env bash
+                            set -euo pipefail
+                            
                             echo "🔐 Authenticating with ECR..."
-                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                            aws ecr get-login-password --region "${AWS_REGION}" | \
+                                docker login --username AWS --password-stdin "${ECR_REGISTRY}"
                             
                             echo "🏷️ Tagging images for ECR..."
-                            docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}
-                            docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
+                            docker tag "${APP_NAME}:${DOCKER_IMAGE_TAG}" "${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
+                            docker tag "${APP_NAME}:${DOCKER_IMAGE_TAG}" "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
                             
                             echo "📤 Pushing images to ECR..."
-                            docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}
-                            docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
+                            docker push "${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
+                            docker push "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
                             
                             echo "✅ Images pushed to ECR successfully!"
                             echo "📦 Image URI: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
@@ -124,7 +129,8 @@ pipeline {
                     }
                 }
             }
-        }
+}
+
         
         stage('Deploy to EC2') {
             when { branch 'main' }

@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   app:
-    image: ${GEODISH_IMAGE:-geodish-app:latest}
+    build: .
+    # ❌ REMOVED: ports: - "5000:5000"  # No external access to Flask
     expose:
-      - "5000"
+      - "5000"  # ✅ Only exposed to internal network
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/geodish
       - SECRET_KEY=geodish-dev-secret-2024
@@ -15,8 +16,9 @@ services:
 
   mongodb:
     image: mongo:7.0
+    # ❌ REMOVED: ports: - "27017:27017"  # No external access to database
     expose:
-      - "27017"
+      - "27017"  # ✅ Only exposed to internal network
     volumes:
       - mongodb_data:/data/db
     networks:
@@ -25,10 +27,10 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "80:80"  # ✅ ONLY public access point
     volumes:
-      - ./static:/usr/share/nginx/html/static:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/usr/share/nginx/html/static
     depends_on:
       - app
     networks:
