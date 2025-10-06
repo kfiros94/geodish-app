@@ -396,42 +396,57 @@ function displayDish(dish) {
 
 // Save current dish to user's recipes
 async function saveCurrentDish() {
-    console.log('💾 Saving current dish:', currentDish);
-    
     if (!currentDish) {
         showAlert('No dish selected to save', 'warning');
         return;
     }
-    
+
     try {
+        console.log('💾 Saving current dish:', currentDish);
+        
+        // Extract the dish ID correctly
+        const dishId = currentDish._id || currentDish.id;
+        
+        if (!dishId) {
+            throw new Error('Dish ID not found');
+        }
+
+        console.log('📤 Sending data:', { 
+            dishid: dishId, 
+            customname: currentDish.name 
+        });
+        
         const response = await fetch(`/user/${currentUserId}/save-dish`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                dish_id: currentDish._id,
-                custom_name: currentDish.name
+                dishid: dishId,
+                customname: currentDish.name
             })
         });
-        
+
+        console.log('📡 Response status:', response.status);
+
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Dish saved successfully:', result);
+        console.log('✅ Recipe saved successfully:', result);
         
-        showAlert(`${currentDish.name} saved to your recipes!`, 'success');
-        
-        // Reload user recipes to show the new addition
-        loadUserRecipes();
+        showAlert('Recipe saved successfully! 📖', 'success');
+        loadUserRecipes(); // Refresh the recipes list
         
     } catch (error) {
-        console.error('❌ Error saving dish:', error);
+        console.error('❌ Error saving recipe:', error);
         showAlert('Failed to save recipe: ' + error.message, 'danger');
     }
 }
+
+
 
 // Load and display user's saved recipes
 async function loadUserRecipes() {

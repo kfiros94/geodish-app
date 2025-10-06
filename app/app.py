@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 db = Database()
 seed_manager = SeedManager(db)
 
-# ADDED: Root route to serve HTML
+# Root route to serve HTML
 @app.route('/', methods=['GET'])
 def index():
     """Serve the main GeoDish application page"""
@@ -32,7 +32,7 @@ def index():
         logger.error(f"Error serving index page: {str(e)}")
         return jsonify({"error": "index.html not found"}), 500
 
-# MISSING ROUTE: Countries endpoint (needed by your frontend!)
+# Countries endpoint
 @app.route('/countries', methods=['GET'])
 def get_countries_route():
     """Get list of all available countries"""
@@ -44,7 +44,7 @@ def get_countries_route():
         logger.error(f"Error getting countries: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# MISSING ROUTE: User recipes endpoint (needed by your frontend!)
+# User recipes endpoint
 @app.route('/user/<user_id>/recipes/full', methods=['GET'])
 def get_user_recipes_full(user_id):
     """Get full details of user's recipes"""
@@ -56,7 +56,7 @@ def get_user_recipes_full(user_id):
         logger.error(f"Error getting detailed recipes for {user_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# MISSING ROUTE: Random dish by country
+# Random dish by country
 @app.route('/dish/<country>', methods=['GET'])
 def get_random_dish(country):
     """Get a random dish from a specific country"""
@@ -71,7 +71,70 @@ def get_random_dish(country):
         logger.error(f"Error getting dish for {country}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# Your existing seed routes
+# MISSING ROUTE: Save dish to user's recipes (THIS WAS MISSING!)
+@app.route('/user/<user_id>/save-dish', methods=['POST'])
+def save_dish_to_user_recipes(user_id):
+    """Save a dish to user's recipes"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data or 'dishid' not in data:
+            return jsonify({"error": "dishid is required"}), 400
+            
+        dish_id = data['dishid']
+        custom_name = data.get('customname')
+        
+        # Save dish to user recipes using your existing method
+        recipe_id = db.save_dish_to_user_recipes(user_id, dish_id, custom_name)
+        
+        if recipe_id:
+            logger.info(f"Saved dish {dish_id} as recipe {recipe_id} for user {user_id}")
+            return jsonify({
+                "message": "Recipe saved successfully",
+                "recipeId": recipe_id
+            }), 201
+        else:
+            # Recipe already exists or dish not found
+            return jsonify({"error": "Recipe already exists or dish not found"}), 409
+            
+    except Exception as e:
+        logger.error(f"Error saving dish for {user_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# MISSING ROUTE: Delete user's recipe (THIS WAS MISSING!)
+@app.route('/user/<user_id>/recipes/<recipe_id>', methods=['DELETE'])
+def delete_user_recipe_route(user_id, recipe_id):
+    """Delete a user's saved recipe"""
+    try:
+        deleted = db.delete_user_recipe(user_id, recipe_id)
+        
+        if deleted:
+            logger.info(f"Deleted recipe {recipe_id} for user {user_id}")
+            return jsonify({"message": "Recipe deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Recipe not found"}), 404
+            
+    except Exception as e:
+        logger.error(f"Error deleting recipe {recipe_id} for {user_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Update user recipe
+@app.route('/user/<userid>/recipes/<recipeid>', methods=['PUT'])
+def update_user_recipe(userid, recipeid):
+    """Update a user's recipe"""
+    try:
+        data = request.get_json()
+        updated = db.update_user_recipe(userid, recipeid, data)
+        if updated:
+            return jsonify({"message": "Recipe updated"}), 200
+        else:
+            return jsonify({"error": "Recipe not found"}), 404
+    except Exception as e:
+        logger.error(f"Error updating recipe {recipeid} for {userid}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Seed routes
 @app.route('/seed', methods=['POST'])
 def seed_database():
     """Seed database with sample dishes"""
@@ -100,21 +163,6 @@ def get_seed_info():
         return jsonify(stats), 200
     except Exception as e:
         logger.error(f"Error getting seed info: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-# Your existing recipe update route
-@app.route('/user/<userid>/recipes/<recipeid>', methods=['PUT'])
-def update_user_recipe(userid, recipeid):
-    """Update a user's recipe"""
-    try:
-        data = request.get_json()
-        updated = db.update_user_recipe(userid, recipeid, data)
-        if updated:
-            return jsonify({"message": "Recipe updated"}), 200
-        else:
-            return jsonify({"error": "Recipe not found"}), 404
-    except Exception as e:
-        logger.error(f"Error updating recipe {recipeid} for {userid}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 # Health check

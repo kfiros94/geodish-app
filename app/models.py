@@ -27,8 +27,7 @@ class Database:
         result = list(self.dishes.aggregate(pipeline))
         if result:
             result[0]['_id'] = str(result[0]['_id'])
-            return result[0]
-        return None
+        return result[0] if result else None
 
     def get_dish_by_id(self, dish_id):
         """Get a specific dish by ID"""
@@ -115,12 +114,18 @@ class Database:
         })
         return result.deleted_count > 0
 
+    # ADDED: Missing update method for the PUT route
+    def update_user_recipe(self, user_id, recipe_id, update_data):
+        """Update a user's recipe"""
+        result = self.user_recipes.update_one(
+            {"_id": ObjectId(recipe_id), "user_id": user_id},
+            {"$set": update_data}
+        )
+        return result.modified_count > 0
+
     # Legacy method for backward compatibility - now uses SeedManager
     def seed_dishes(self):
         """Legacy seed method - use SeedManager instead"""
         from .seed_manager import SeedManager
         seed_manager = SeedManager(self)
         return seed_manager.seed_database()
-    
-   
-
