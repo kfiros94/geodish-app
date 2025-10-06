@@ -167,7 +167,12 @@ async function loadCountries() {
         const data = await response.json();
         console.log('📊 Countries data received:', data);
         
-        if (data && data.countries && Array.isArray(data.countries)) {
+        // ✅ FIXED: Handle direct array format from API
+        if (Array.isArray(data)) {
+            // Direct array format: ["Argentina", "Australia"...]
+            displayCountriesGrid(data);
+        } else if (data && data.countries && Array.isArray(data.countries)) {
+            // Nested format: {countries: ["Argentina"...]}
             displayCountriesGrid(data.countries);
         } else {
             throw new Error('Invalid countries data format');
@@ -277,7 +282,8 @@ async function getRandomDishForCountry(country) {
     console.log(`🎲 Getting random dish from ${country}...`);
     
     try {
-        const response = await fetch(`/dish/random/${country}`);
+        // ✅ FIXED: Match the correct API endpoint
+        const response = await fetch(`/dish/${country}`);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -398,7 +404,7 @@ async function saveCurrentDish() {
     }
     
     try {
-        const response = await fetch(`/user/${currentUserId}/recipes`, {
+        const response = await fetch(`/user/${currentUserId}/save-dish`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -440,7 +446,10 @@ async function loadUserRecipes() {
         const data = await response.json();
         console.log('📊 User recipes received:', data);
         
-        if (data && data.recipes && Array.isArray(data.recipes)) {
+        // ✅ FIXED: Handle direct array format from API
+        if (Array.isArray(data)) {
+            displayUserRecipes(data);
+        } else if (data && data.recipes && Array.isArray(data.recipes)) {
             displayUserRecipes(data.recipes);
         } else {
             displayUserRecipes([]);
@@ -475,9 +484,9 @@ function displayUserRecipes(recipes) {
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card recipe-card h-100">
                 <div class="card-body">
-                    <h6 class="card-title">${recipe.custom_name || recipe.original_dish?.name || 'Unknown Recipe'}</h6>
+                    <h6 class="card-title">${recipe.custom_name || recipe.dish_name || 'Unknown Recipe'}</h6>
                     <p class="card-text">
-                        <small class="text-muted">From ${recipe.original_dish?.country || 'Unknown'}</small>
+                        <small class="text-muted">From ${recipe.country || 'Unknown'}</small>
                     </p>
                     <p class="card-text">${recipe.ingredients?.join(', ') || 'No ingredients listed'}</p>
                     <p class="card-text"><small>${recipe.instructions || 'No instructions available'}</small></p>
@@ -487,9 +496,6 @@ function displayUserRecipes(recipes) {
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
-                <button class="recipe-delete-btn" onclick="deleteRecipe('${recipe._id}')" title="Delete recipe">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
         </div>
     `).join('');

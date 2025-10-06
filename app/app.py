@@ -18,13 +18,60 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize database and seed manager.
+# Initialize database and seed manager
 db = Database()
 seed_manager = SeedManager(db)
 
-# All your existing routes stay the same...
-# (I'll just show the updated seed routes)
+# ADDED: Root route to serve HTML
+@app.route('/', methods=['GET'])
+def index():
+    """Serve the main GeoDish application page"""
+    try:
+        return app.send_static_file('index.html')
+    except Exception as e:
+        logger.error(f"Error serving index page: {str(e)}")
+        return jsonify({"error": "index.html not found"}), 500
 
+# MISSING ROUTE: Countries endpoint (needed by your frontend!)
+@app.route('/countries', methods=['GET'])
+def get_countries_route():
+    """Get list of all available countries"""
+    try:
+        countries = db.get_countries()
+        logger.info(f"Found {len(countries)} countries")
+        return jsonify(countries), 200
+    except Exception as e:
+        logger.error(f"Error getting countries: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# MISSING ROUTE: User recipes endpoint (needed by your frontend!)
+@app.route('/user/<user_id>/recipes/full', methods=['GET'])
+def get_user_recipes_full(user_id):
+    """Get full details of user's recipes"""
+    try:
+        recipes = db.get_user_recipes(user_id)
+        logger.info(f"Found {len(recipes)} recipes for user {user_id}")
+        return jsonify(recipes), 200
+    except Exception as e:
+        logger.error(f"Error getting detailed recipes for {user_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# MISSING ROUTE: Random dish by country
+@app.route('/dish/<country>', methods=['GET'])
+def get_random_dish(country):
+    """Get a random dish from a specific country"""
+    try:
+        dish = db.get_random_dish_by_country(country)
+        if dish:
+            logger.info(f"Found dish: {dish['name']} from {country}")
+            return jsonify(dish), 200
+        else:
+            return jsonify({"error": f"No dishes found for country: {country}"}), 404
+    except Exception as e:
+        logger.error(f"Error getting dish for {country}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Your existing seed routes
 @app.route('/seed', methods=['POST'])
 def seed_database():
     """Seed database with sample dishes"""
@@ -54,18 +101,43 @@ def get_seed_info():
     except Exception as e:
         logger.error(f"Error getting seed info: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+# Your existing recipe update route
 @app.route('/user/<userid>/recipes/<recipeid>', methods=['PUT'])
 def update_user_recipe(userid, recipeid):
-    data = request.get_json()
-    updated = db.update_user_recipe(userid, recipeid, data)
-    if updated:
-        return jsonify({"message": "Recipe updated"}), 200
-    else:
-        return jsonify({"error": "Recipe not found"}), 404
+    """Update a user's recipe"""
+    try:
+        data = request.get_json()
+        updated = db.update_user_recipe(userid, recipeid, data)
+        if updated:
+            return jsonify({"message": "Recipe updated"}), 200
+        else:
+            return jsonify({"error": "Recipe not found"}), 404
+    except Exception as e:
+        logger.error(f"Error updating recipe {recipeid} for {userid}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
-# Add this to your app.py to fix /seed-info endpoint
-def get_countries():
-    """Get list of available countries"""
-    return ['Italy', 'France', 'Spain', 'Germany', 'Greece']  # Your countries list
+# Health check
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({"status": "healthy", "message": "GeoDish API is running"}), 200
 
-# ... rest of your routes stay exactly the same
+# Metrics for monitoring
+@app.route('/metrics', methods=['GET'])
+def get_metrics():
+    """Get application metrics"""
+    try:
+        total_dishes = db.get_total_dish_count()
+        countries = db.get_countries()
+        return jsonify({
+            "total_dishes": total_dishes,
+            "total_countries": len(countries),
+            "status": "healthy"
+        }), 200
+    except Exception as e:
+        logger.error(f"Error getting metrics: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
