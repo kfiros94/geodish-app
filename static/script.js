@@ -448,7 +448,7 @@ async function saveCurrentDish() {
 
 
 
-// Load and display user's saved recipes
+// Load and display user's saved recipes.
 async function loadUserRecipes() {
     console.log('📚 Loading user recipes...');
     
