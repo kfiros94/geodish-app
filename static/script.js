@@ -477,46 +477,89 @@ async function loadUserRecipes() {
 }
 
 function displayUserRecipes(recipes) {
-    console.log('🍴 Displaying user recipes:', recipes);
+    console.log('📖 Displaying user recipes:', recipes);
     
     if (!savedRecipesDiv) {
         console.error('❌ Saved recipes div not found');
         return;
     }
-    
-    if (recipes.length === 0) {
+
+    if (!recipes || recipes.length === 0) {
         savedRecipesDiv.innerHTML = `
-            <div class="text-center py-5">
-                <h5>📖 No saved recipes yet</h5>
-                <p class="text-muted">Start discovering dishes to build your personal cookbook!</p>
-                <a href="#countries-section" class="btn btn-primary">Start Exploring</a>
+            <div class="text-center text-muted py-4">
+                <h4>No saved recipes yet</h4>
+                <p class="mb-3">Start discovering dishes to build your personal cookbook!</p>
+                <a href="#countries" class="btn btn-primary">
+                    <i class="fas fa-compass me-2"></i>Start Exploring
+                </a>
             </div>
         `;
         return;
     }
-    
-    const recipesHTML = recipes.map(recipe => `
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card recipe-card h-100">
-                <div class="card-body">
-                    <h6 class="card-title">${recipe.custom_name || recipe.dish_name || 'Unknown Recipe'}</h6>
-                    <p class="card-text">
-                        <small class="text-muted">From ${recipe.country || 'Unknown'}</small>
-                    </p>
-                    <p class="card-text">${recipe.ingredients?.join(', ') || 'No ingredients listed'}</p>
-                    <p class="card-text"><small>${recipe.instructions || 'No instructions available'}</small></p>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-sm btn-danger" onclick="deleteRecipe('${recipe._id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
+
+    const recipesHTML = recipes.map(recipe => {
+        // ✅ FIXED: Access data from original_dish object
+        const dishData = recipe.original_dish || recipe;
+        const recipeName = recipe.custom_name || dishData.name || 'Unknown Recipe';
+        const country = dishData.country || 'Unknown';
+        const ingredients = dishData.ingredients || [];
+        const instructions = dishData.instructions || 'No instructions available';
+
+        console.log('🔍 Processing recipe:', {
+            recipeName,
+            country,
+            ingredients,
+            instructions,
+            recipeId: recipe._id
+        });
+
+        return `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm recipe-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0 d-flex align-items-center">
+                            <i class="fas fa-utensils me-2"></i>
+                            ${recipeName}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <strong>From:</strong> ${country}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6 class="text-success">
+                                <i class="fas fa-list me-2"></i>Ingredients
+                            </h6>
+                            ${ingredients.length > 0 
+                                ? `<ul class="list-unstyled ms-3">
+                                    ${ingredients.map(ingredient => `<li>• ${ingredient}</li>`).join('')}
+                                   </ul>`
+                                : '<p class="text-muted ms-3">No ingredients listed</p>'
+                            }
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="text-info">
+                                <i class="fas fa-clipboard-list me-2"></i>Instructions
+                            </h6>
+                            <p class="card-text ms-3">${instructions}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="btn btn-danger btn-sm" onclick="deleteRecipe('${recipe._id}')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
-    
-    savedRecipesDiv.innerHTML = recipesHTML;
-    console.log(`✅ Successfully displayed ${recipes.length} recipes`);
+        `;
+    }).join('');
+
+    savedRecipesDiv.innerHTML = `<div class="row">${recipesHTML}</div>`;
+    console.log('✅ User recipes displayed successfully');
 }
 
 // Delete a saved recipe
