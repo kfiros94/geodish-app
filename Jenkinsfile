@@ -173,7 +173,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
         }
         failure {
             echo '❌ Some integration tests failed, but continuing pipeline...'
-            // Make sure pipeline continues even if integration tests fail
+            // Make sure pipeline continues even if integration tests fail.
             script {
                 currentBuild.result = 'SUCCESS'
             }
