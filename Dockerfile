@@ -13,6 +13,7 @@ WORKDIR /app
 
 # Copy installed packages from builder
 COPY --from=builder /root/.local /root/.local
+RUN pip install gunicorn
 
 # Copy application code
 COPY app/ ./app/
