@@ -221,7 +221,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
 stage('Update GitOps Repository') {
     when { branch 'main' }
     steps {
-        echo '=== GitOps Stage: Update Deployment Configuration ==='
+        echo '=== GitOps Stage: Update App-of-Apps Configuration ==='
         script {
             withCredentials([
                 string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
@@ -229,7 +229,7 @@ stage('Update GitOps Repository') {
                 sh '''#!/usr/bin/env bash
                 set -euo pipefail
                 
-                echo "🔄 Updating GitOps repository with new image tag..."
+                echo "🔄 Updating App-of-Apps with new image tag..."
                 
                 # Clone GitOps repository
                 git clone https://${GITHUB_TOKEN}@github.com/kfiros94/geodish-gitops.git gitops-repo
@@ -239,18 +239,18 @@ stage('Update GitOps Repository') {
                 git config user.name "Jenkins Pipeline"
                 git config user.email "jenkins@geodish.com"
                 
-                # Update image tag in ArgoCD application
-                sed -i 's/value: "latest"/value: "'${DOCKER_IMAGE_TAG}'"/' app-of-apps/templates/geodish-app.yaml
+                # Update image tag in App-of-Apps values
+                sed -i 's/tag: "[^"]*"/tag: "'${DOCKER_IMAGE_TAG}'"/' app-of-apps/values.yaml
                 
                 # Check if there are changes to commit
                 if git diff --quiet; then
                     echo "⚠️  No changes detected - image tag might already be ${DOCKER_IMAGE_TAG}"
                 else
                     # Commit and push changes
-                    git add app-of-apps/templates/geodish-app.yaml
+                    git add app-of-apps/values.yaml
                     git commit -m "🚀 Update geodish-app image tag to ${DOCKER_IMAGE_TAG}"
                     git push origin main
-                    echo "✅ GitOps repository updated successfully!"
+                    echo "✅ App-of-Apps updated successfully!"
                 fi
                 
                 echo "📦 Current image tag: ${DOCKER_IMAGE_TAG}"
@@ -259,6 +259,7 @@ stage('Update GitOps Repository') {
         }
     }
 }
+
 
 
         
