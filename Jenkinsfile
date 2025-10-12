@@ -223,27 +223,56 @@ stage('Update GitOps Repository') {
     steps {
         echo '=== GitOps Stage: Update Deployment Configuration ==='
         script {
-            dir('gitops-repo') {
-                git branch: 'main',
-                    credentialsId: 'github-token',
-                    url: 'https://github.com/kfiros94/geodish-gitops.git'
-                
+            withCredentials([
+                string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+            ]) {
                 sh '''#!/usr/bin/env bash
-                    git config user.name "Jenkins Pipeline"
-                    git config user.email "jenkins@geodish.com"
-                    
-                    sed -i 's/tag: "[0-9]*"/tag: "'${DOCKER_IMAGE_TAG}'"/' helm-charts/geodish-app/values.yaml
-                    
+                set -euo pipefail
+                
+                echo "🔄 Updating GitOps repository with new image tag..."
+                
+                # Clean up any existing gitops-repo directory
+                echo "🧹 Cleaning up previous gitops-repo directory..."
+                rm -rf gitops-repo
+                
+                # Clone GitOps repository
+                git clone https://${GITHUB_TOKEN}@github.com/kfiros94/geodish-gitops.git gitops-repo
+                cd gitops-repo
+                
+                # Configure git
+                git config user.name "Jenkins Pipeline"
+                git config user.email "jenkins@geodish.com"
+                
+                # Update image tag in values.yaml
+                sed -i 's/tag: "[0-9]*"/tag: "'${DOCKER_IMAGE_TAG}'"/' helm-charts/geodish-app/values.yaml
+                
+                # Check if there are changes to commit
+                if git diff --quiet; then
+                    echo "⚠️  No changes detected - image tag might already be ${DOCKER_IMAGE_TAG}"
+                else
+                    # Commit and push changes
                     git add helm-charts/geodish-app/values.yaml
                     git commit -m "🚀 Update geodish-app image tag to ${DOCKER_IMAGE_TAG}"
                     git push origin main
+                    echo "✅ GitOps repository updated successfully!"
+                fi
+                
+                echo "📦 Current image tag: ${DOCKER_IMAGE_TAG}"
                 '''
             }
         }
     }
-}
-
-        
+    post {
+        always {
+            script {
+                sh '''
+                    echo "🧹 Cleaning up gitops-repo directory..."
+                    rm -rf gitops-repo
+                '''
+            }
+        }
+    }
+}        
         stage('Deploy to EC2') {
             when { branch 'main' }
             steps {
