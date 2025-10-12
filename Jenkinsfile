@@ -53,9 +53,9 @@ pipeline {
             }
         }
         
-        stage('Test') {
+        stage('Unit-Tests') {
             steps {
-                echo '=== Test Stage: Running Unit Tests ==='
+                echo '=== Unit-Tests Stage: Running Unit Tests ==='
                 sh '''#!/bin/bash
                     set -euo pipefail
                     echo "Activating virtual environment..."
@@ -69,7 +69,7 @@ pipeline {
             }
             post {
                 always {
-                    publishTestResults testResultsPattern: 'test-results.xml'
+                    junit testResultsPattern: 'test-results.xml'
                 }
             }
         }
@@ -174,7 +174,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
             }
             post {
                 always {
-                    publishTestResults testResultsPattern: 'integration-test-results.xml'
+                    junit testResultsPattern: 'integration-test-results.xml'
                     sh '''
                         echo "🧹 Cleaning up MongoDB test container..."
                         docker stop mongo-test 2>/dev/null || true
@@ -293,7 +293,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
             }
             steps {
                 echo '=== Deploy Stage: Ready for Deployment ==='
-                sh '''#!/bin/bash
+                sh '''#!/bash
                     echo "🚀 Ready for deployment!"
                     echo "📦 ECR Image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
                     echo "🎯 GitOps repository updated - ArgoCD will handle deployment"
