@@ -6,8 +6,9 @@ from app.seed_manager import SeedManager
 import logging
 import os
 
-# Get absolute path to static folder
+# Fix static folder path for container
 current_dir = os.path.dirname(os.path.abspath(__file__))
+# In container: /app/app/app.py, so static is at /app/static
 static_folder = os.path.join(os.path.dirname(current_dir), 'static')
 
 app = Flask(__name__, static_folder=static_folder, static_url_path='/static')
@@ -27,10 +28,18 @@ seed_manager = SeedManager(db)
 def index():
     """Serve the main GeoDish application page"""
     try:
-        return app.send_static_file('index.html')
+        index_path = os.path.join(static_folder, 'index.html')
+        logger.info(f"Serving index.html from: {index_path}")
+        logger.info(f"Static folder: {static_folder}")
+        logger.info(f"Files in static: {os.listdir(static_folder) if os.path.exists(static_folder) else 'NOT FOUND'}")
+        
+        if os.path.exists(index_path):
+            return app.send_static_file('index.html')
+        else:
+            return jsonify({"error": f"index.html not found at {index_path}"}), 500
     except Exception as e:
         logger.error(f"Error serving index page: {str(e)}")
-        return jsonify({"error": "index.html not found"}), 500
+        return jsonify({"error": str(e)}), 500
 
 # Countries endpoint
 @app.route('/countries', methods=['GET'])
@@ -71,21 +80,19 @@ def get_random_dish(country):
         logger.error(f"Error getting dish for {country}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# MISSING ROUTE: Save dish to user's recipes (THIS WAS MISSING!)
+# Save dish to user's recipes
 @app.route('/user/<user_id>/save-dish', methods=['POST'])
 def save_dish_to_user_recipes(user_id):
     """Save a dish to user's recipes"""
     try:
         data = request.get_json()
         
-        # Validate required fields
         if not data or 'dishid' not in data:
             return jsonify({"error": "dishid is required"}), 400
             
         dish_id = data['dishid']
         custom_name = data.get('customname')
         
-        # Save dish to user recipes using your existing method
         recipe_id = db.save_dish_to_user_recipes(user_id, dish_id, custom_name)
         
         if recipe_id:
@@ -95,14 +102,13 @@ def save_dish_to_user_recipes(user_id):
                 "recipeId": recipe_id
             }), 201
         else:
-            # Recipe already exists or dish not found
             return jsonify({"error": "Recipe already exists or dish not found"}), 409
             
     except Exception as e:
         logger.error(f"Error saving dish for {user_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-# MISSING ROUTE: Delete user's recipe (THIS WAS MISSING!)
+# Delete user's recipe
 @app.route('/user/<user_id>/recipes/<recipe_id>', methods=['DELETE'])
 def delete_user_recipe_route(user_id, recipe_id):
     """Delete a user's saved recipe"""
