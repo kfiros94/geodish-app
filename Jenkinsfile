@@ -218,6 +218,42 @@ app.run(host='0.0.0.0', port=5000, debug=False)
 }
 
 
+stage('Update GitOps Repository') {
+            when { branch 'main' }
+            steps {
+                echo '=== GitOps Stage: Update Deployment Configuration ==='
+                script {
+                    withCredentials([
+                        string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+                    ]) {
+                        sh '''#!/usr/bin/env bash
+                        set -euo pipefail
+                        
+                        echo "🔄 Updating GitOps repository with new image tag..."
+                        
+                        # Clone GitOps repository
+                        git clone https://${GITHUB_TOKEN}@github.com/kfiros94/geodish-gitops.git gitops-repo
+                        cd gitops-repo
+                        
+                        # Configure git
+                        git config user.name "Jenkins Pipeline"
+                        git config user.email "jenkins@geodish.com"
+                        
+                        # Update image tag in ArgoCD application
+                        sed -i 's/value: "latest"/value: "'${DOCKER_IMAGE_TAG}'"/' app-of-apps/templates/geodish-app.yaml
+                        
+                        # Commit and push changes
+                        git add app-of-apps/templates/geodish-app.yaml
+                        git commit -m "🚀 Update geodish-app image tag to ${DOCKER_IMAGE_TAG}"
+                        git push origin main
+                        
+                        echo "✅ GitOps repository updated successfully!"
+                        echo "📦 Updated image tag to: ${DOCKER_IMAGE_TAG}"
+                        '''
+                    }
+                }
+            }
+        }
 
         
         stage('Deploy to EC2') {
