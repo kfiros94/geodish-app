@@ -13,7 +13,6 @@ WORKDIR /app
 
 # Copy installed packages from builder
 COPY --from=builder /root/.local /root/.local
-RUN pip install gunicorn
 
 # Copy application code
 COPY app/ ./app/
@@ -22,6 +21,9 @@ COPY static/ ./static/
 # Update PATH
 ENV PATH=/root/.local/bin:$PATH
 
+# Set Flask app location
+ENV FLASK_APP=app.app:app
+
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "app.app:app"]
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
