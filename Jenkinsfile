@@ -312,7 +312,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
                 docker system prune -f || true
             '''
             
-            // Archive important artifacts
+            // Archive important artifacts.
             archiveArtifacts artifacts: '**/*.xml, **/*.log', allowEmptyArchive: true
             
             // Clean workspace
