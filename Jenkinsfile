@@ -11,10 +11,6 @@ pipeline {
         FLASK_ENV = "testing"
     }
     
-    tools {
-        dockerTool 'docker'
-    }
-    
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timeout(time: 30, unit: 'MINUTES')
@@ -335,7 +331,6 @@ app.run(host='0.0.0.0', port=5000, debug=False)
         
         failure {
             echo '❌ Pipeline failed - check logs above'
-            // Could add notification here (Slack, email, etc.)
         }
         
         unstable {
