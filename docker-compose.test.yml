@@ -1,12 +1,8 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0
     environment:
       - MONGO_INITDB_DATABASE=geodish_test
-    ports:
-      - "27017:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 5s
@@ -22,8 +18,6 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    volumes:
-      - ./tests:/app/tests
     command: >
       sh -c "
         pip install pytest &&

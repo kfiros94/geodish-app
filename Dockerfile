@@ -17,6 +17,7 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code
 COPY app/ ./app/
 COPY static/ ./static/
+COPY tests/ ./tests/
 
 # Update PATH
 ENV PATH=/root/.local/bin:$PATH
