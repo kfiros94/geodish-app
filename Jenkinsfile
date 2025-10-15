@@ -33,36 +33,26 @@ pipeline {
             }
         }
         
-        stage('Unit Tests') {
+stage('Unit Tests') {
     steps {
         echo '=== Running unit tests ==='
         sh '''
             . venv/bin/activate
             
-            echo "📁 Current directory:"
-            pwd
+            echo "🔍 Pytest version:"
+            python3 -m pytest --version
             
-            echo "📁 Directory structure:"
-            ls -la
+            echo "🔍 Can Python import test functions?"
+            python3 -c "from tests.test import test_health_endpoint; print('✅ Can import test functions!')"
             
-            echo "📁 Tests directory:"
-            ls -la tests/
+            echo "🔍 Running pytest with maximum verbosity:"
+            python3 -m pytest tests/test.py -vvv --collect-only
             
-            echo "🐍 Python path:"
-            python3 -c "import sys; print('\\n'.join(sys.path))"
-            
-            echo "🔍 Testing imports manually:"
-            python3 -c "import sys; sys.path.insert(0, '.'); from app.app import app; print('✅ Import successful!')" || echo "❌ Import failed!"
-            
-            echo "🧪 Pytest collection (verbose):"
-            python3 -m pytest tests/ --collect-only -v
-            
-            echo "🧪 Running tests:"
+            echo "🔍 Running actual tests:"
             python3 -m pytest tests/test.py -v --tb=short
         '''
     }
-}
-        
+}        
         stage('Package') {
             steps {
                 echo '=== Building Docker image ==='
