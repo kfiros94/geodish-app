@@ -33,31 +33,18 @@ pipeline {
             }
         }
         
-stage('Unit Tests') {
-    steps {
-        echo '=== Running unit tests ==='
-        sh '''
-            . venv/bin/activate
-            
-            echo "🔍 Pytest version:"
-            python3 -m pytest --version
-            
-            echo "🔍 Can Python import test functions?"
-            python3 -c "from tests.test import test_health_endpoint; print('✅ Can import test functions!')"
-            
-            echo "🔍 Running pytest with maximum verbosity:"
-            python3 -m pytest tests/test.py -vvv --collect-only
-            
-            echo "🔍 Running actual tests:"
-            python3 -m pytest tests/test.py -v --tb=short
-        '''
-    }
-}        
+        stage('Unit Tests') {
+            steps {
+                echo '=== Running unit tests ==='
+                sh '. venv/bin/activate && python3 -m pytest tests/test.py -v --tb=short'
+            }
+        }
+        
         stage('Package') {
             steps {
                 echo '=== Building Docker image ==='
                 sh "docker build -t ${APP_NAME}:${DOCKER_IMAGE_TAG} ."
-                sh "docker build -t ${APP_NAME}:latest ."
+                sh "docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${APP_NAME}:latest"
             }
         }
         
@@ -69,20 +56,18 @@ stage('Unit Tests') {
                 }
             }
             steps {
-                echo '=== Running integration tests with docker-compose ==='
-                sh 'docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit'
+                echo '=== Running integration tests ==='
+                sh 'docker compose -f docker-compose.test.yml up --build --abort-on-container-exit'
             }
             post {
                 always {
-                    sh 'docker-compose -f docker-compose.test.yml down -v'
+                    sh 'docker compose -f docker-compose.test.yml down -v || true'
                 }
             }
         }
         
         stage('Push to ECR') {
-            when { 
-                branch 'main' 
-            }
+            when { branch 'main' }
             steps {
                 echo '=== Pushing to Amazon ECR ==='
                 withCredentials([
@@ -93,24 +78,20 @@ stage('Unit Tests') {
                     sh '''
                         aws ecr get-login-password --region ${AWS_REGION} | \
                             docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                        docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}
+                        docker tag ${APP_NAME}:latest ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
+                        docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}
+                        docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
                     '''
-                    sh "docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
-                    sh "docker tag ${APP_NAME}:${DOCKER_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
-                    sh "docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}"
-                    sh "docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
                 }
             }
         }
         
         stage('Update GitOps Repo') {
-            when { 
-                branch 'main' 
-            }
+            when { branch 'main' }
             steps {
                 echo '=== Updating GitOps repository ==='
-                withCredentials([
-                    string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
-                ]) {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         rm -rf gitops-repo
                         git clone https://${GITHUB_TOKEN}@github.com/kfiros94/geodish-gitops.git gitops-repo
@@ -136,10 +117,10 @@ stage('Unit Tests') {
             sh "docker rmi ${APP_NAME}:latest || true"
         }
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '=== Pipeline completed successfully ==='
         }
         failure {
-            echo '❌ Pipeline failed!'
+            echo '=== Pipeline failed ==='
         }
     }
 }
