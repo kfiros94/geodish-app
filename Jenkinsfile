@@ -34,11 +34,34 @@ pipeline {
         }
         
         stage('Unit Tests') {
-            steps {
-                echo '=== Running unit tests ==='
-                sh '. venv/bin/activate && python3 -m pytest tests/ -v --tb=short'
-            }
-        }
+    steps {
+        echo '=== Running unit tests ==='
+        sh '''
+            . venv/bin/activate
+            
+            echo "📁 Current directory:"
+            pwd
+            
+            echo "📁 Directory structure:"
+            ls -la
+            
+            echo "📁 Tests directory:"
+            ls -la tests/
+            
+            echo "🐍 Python path:"
+            python3 -c "import sys; print('\\n'.join(sys.path))"
+            
+            echo "🔍 Testing imports manually:"
+            python3 -c "import sys; sys.path.insert(0, '.'); from app.app import app; print('✅ Import successful!')" || echo "❌ Import failed!"
+            
+            echo "🧪 Pytest collection (verbose):"
+            python3 -m pytest tests/ --collect-only -v
+            
+            echo "🧪 Running tests:"
+            python3 -m pytest tests/test.py -v --tb=short
+        '''
+    }
+}
         
         stage('Package') {
             steps {

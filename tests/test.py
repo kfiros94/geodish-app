@@ -3,8 +3,11 @@ import sys
 import os
 import json
 from unittest.mock import patch, MagicMock
+from pathlib import Path
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from app.app import app
 from app.models import Database
@@ -31,6 +34,8 @@ def test_health_endpoint(client):
     data = json.loads(response.data)
     assert data['status'] == 'healthy'
     assert 'message' in data
+
+# ... rest of your tests stay the same
 
 def test_countries_endpoint(client):
     """Test countries endpoint returns list"""
