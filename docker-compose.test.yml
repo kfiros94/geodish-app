@@ -22,8 +22,10 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    volumes:
+      - ./tests:/app/tests
     command: >
       sh -c "
         pip install pytest &&
-        python3 -m pytest tests/ -v --tb=short
+        python3 -m pytest /app/tests/test.py -v --tb=short
       "
