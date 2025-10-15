@@ -21,5 +21,8 @@ services:
     command: >
       sh -c "
         pip install pytest &&
+        echo 'Seeding database...' &&
+        python3 -c 'from app.models import Database; from app.seed_manager import SeedManager; db = Database(); sm = SeedManager(db); sm.seed_database(force=True); print(\"Database seeded!\")' &&
+        echo 'Running tests...' &&
         python3 -m pytest /app/tests/test.py -v --tb=short
       "
