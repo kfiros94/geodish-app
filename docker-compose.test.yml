@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    environment:
+      - MONGO_INITDB_DATABASE=geodish_test
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app-test:
+    build: .
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/geodish_test
+      - FLASK_ENV=testing
+      - PYTHONPATH=/app
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    command: >
+      sh -c "
+        pip install pytest &&
+        python3 -m pytest tests/ -v --tb=short
+      "
