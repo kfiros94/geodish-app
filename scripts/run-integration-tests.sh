@@ -1,13 +1,23 @@
 #!/bin/bash
-set -e  # Exit on error
+set -e
 
 echo "================================"
 echo "🧪 Running Integration Tests"
 echo "================================"
 
-# Wait for MongoDB to be ready
+# Wait for MongoDB to be ready using Python
 echo "⏳ Waiting for MongoDB..."
-until mongosh --eval "db.adminCommand('ping')" mongodb:27017/geodish_test --quiet; do
+until python3 -c "
+import pymongo
+import sys
+try:
+    client = pymongo.MongoClient('mongodb://mongodb:27017/', serverSelectionTimeoutMS=2000)
+    client.admin.command('ping')
+    print('MongoDB is ready!')
+    sys.exit(0)
+except Exception:
+    sys.exit(1)
+" 2>/dev/null; do
   echo "MongoDB not ready, waiting..."
   sleep 2
 done
