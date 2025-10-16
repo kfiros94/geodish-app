@@ -57,6 +57,7 @@ pipeline {
             }
             steps {
                 echo '=== Running integration tests ==='
+                sh 'chmod +x scripts/run-integration-tests.sh'
                 sh 'docker compose -f docker-compose.test.yml up --build --abort-on-container-exit'
             }
             post {
@@ -64,7 +65,8 @@ pipeline {
                     sh 'docker compose -f docker-compose.test.yml down -v || true'
                 }
             }
-        }
+}
+
         
         stage('Push to ECR') {
             when { branch 'main' }
