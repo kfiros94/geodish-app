@@ -116,10 +116,52 @@ pipeline {
             sh "docker rmi ${APP_NAME}:${DOCKER_IMAGE_TAG} || true"
             sh "docker rmi ${APP_NAME}:latest || true"
         }
+        
         success {
+            script {
+                def message = """✅ GeoDish CI Pipeline Succeeded
+Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Duration: ${currentBuild.durationString}
+Image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${DOCKER_IMAGE_TAG}
+GitHub: <https://github.com/kfiros94/geodish-app|Repository>
+Console: <${env.BUILD_URL}console|View Logs>"""
+                
+                try {
+                    slackSend(
+                        channel: '#cowsay-slack',
+                        color: 'good',
+                        message: message,
+                        teamDomain: 'develeapbootcamp26',
+                        tokenCredentialId: 'slacktoken3'
+                    )
+                } catch (Exception e) {
+                    echo "Failed to send Slack notification: ${e.message}"
+                }
+            }
             echo '=== Pipeline completed successfully ==='
         }
+        
         failure {
+            script {
+                def message = """❌ GeoDish CI Pipeline Failed
+Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Duration: ${currentBuild.durationString}
+Branch: ${env.GIT_BRANCH ?: 'N/A'}
+GitHub: <https://github.com/kfiros94/geodish-app|Repository>
+Console: <${env.BUILD_URL}console|View Logs>"""
+                
+                try {
+                    slackSend(
+                        channel: '#cowsay-slack',
+                        color: 'danger',
+                        message: message,
+                        teamDomain: 'develeapbootcamp26',
+                        tokenCredentialId: 'slacktoken3'
+                    )
+                } catch (Exception e) {
+                    echo "Failed to send Slack notification: ${e.message}"
+                }
+            }
             echo '=== Pipeline failed ==='
         }
     }
