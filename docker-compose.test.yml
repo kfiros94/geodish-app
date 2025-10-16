@@ -18,6 +18,6 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    volumes:
-      - ./scripts:/app/scripts
+    # REMOVED: volumes:
+    # REMOVED:   - ./scripts:/app/scripts
     command: bash /app/scripts/run-integration-tests.sh
