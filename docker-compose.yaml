@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: .  # ✅ Build from source like original
+    build: .  # ✅ Build from source like original.
     expose:
       - "5000"
     environment:
